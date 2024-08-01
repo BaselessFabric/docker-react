@@ -1,70 +1,143 @@
-# Getting Started with Create React App
+# Docker-React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a simple React application created for testing and experimenting with Docker. The main goal is to understand how Docker works, dockerize a React app, and implement CI/CD processes using a Docker image repository.
 
-## Available Scripts
+## Table of Contents
+- [About the Project](#about-the-project)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running Locally](#running-locally)
+- [Dockerization](#dockerization)
+  - [Building Docker Image](#building-docker-image)
+  - [Running Docker Container](#running-docker-container)
+- [CI/CD Pipeline](#ci-cd-pipeline)
+  - [Setup](#setup)
+  - [Workflow](#workflow)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-In the project directory, you can run:
+## About the Project
 
-### `npm start`
+This project is a simple React application designed for learning and experimenting with Docker. It focuses on:
+- Dockerizing a React application
+- Using Docker image repositories
+- Implementing CI/CD processes with Docker
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Getting Started
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Prerequisites
 
-### `npm test`
+To run this project locally, you need to have the following installed:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [Node.js](https://nodejs.org/en/download/)
+- [Docker](https://www.docker.com/get-started)
+- [Git](https://git-scm.com/)
 
-### `npm run build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/BaselessFabric/docker-react.git
+   cd docker-react
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Install NPM packages:
+   ```sh
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Running Locally
 
-### `npm run eject`
+To run the application locally, use the following command:
+```sh
+npm start
+```
+This will start the development server and open the application in your default web browser.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Dockerization
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Building Docker Image
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+To build a Docker image of the React application, use the following command:
+```sh
+docker build -t docker-react .
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Running Docker Container
 
-## Learn More
+To run the Docker container, use the following command:
+```sh
+docker run -p 3000:3000 docker-react
+```
+This will start the application in a Docker container and make it accessible at `http://localhost:3000`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## CI/CD Pipeline
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Setup
 
-### Code Splitting
+For the CI/CD pipeline, you can use a service like GitHub Actions, GitLab CI, or Jenkins. This project includes a basic GitHub Actions workflow file.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Workflow
 
-### Analyzing the Bundle Size
+1. The workflow will trigger on push and pull request events.
+2. It will build the Docker image.
+3. It will run tests (if any).
+4. It will push the Docker image to a Docker image repository (Docker Hub, AWS ECR, etc.).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Example GitHub Actions workflow file (`.github/workflows/docker.yml`):
 
-### Making a Progressive Web App
+```yaml
+name: Docker CI/CD
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-### Advanced Configuration
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-### Deployment
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-### `npm run build` fails to minify
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: your-username/docker-react:latest
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Contributing
+
+Contributions are welcome! Please fork this repository and create a pull request with your changes. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+
+Alex Walls
+
+Project Link: [https://github.com/BaselessFabric/docker-react.git](ttps://github.com/BaselessFabric/docker-react.git)
